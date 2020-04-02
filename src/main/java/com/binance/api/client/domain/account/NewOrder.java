@@ -39,6 +39,14 @@ public class NewOrder {
   private String quantity;
 
   /**
+   * According to API docs:
+   * MARKET orders using quoteOrderQty specifies the amount the user wants
+   * to spend (when buying) or receive (when selling) of the quote asset;
+   * the correct quantity will be determined based on the market liquidity and quoteOrderQty.
+   */
+  private String quoteOrderQty;
+
+  /**
    * Price.
    */
   private String price;
@@ -140,6 +148,15 @@ public class NewOrder {
     return this;
   }
 
+  public String getQuoteOrderQty() {
+    return quoteOrderQty;
+  }
+
+  public NewOrder quoteOrderQty(String quoteOrderQty) {
+    this.quoteOrderQty = quoteOrderQty;
+    return this;
+  }
+
   public String getPrice() {
     return price;
   }
@@ -222,6 +239,26 @@ public class NewOrder {
   }
 
   /**
+   * Places a MARKET buy order with specifies the <code>quoteOrderQty</code>> the user wants to spend.
+   *
+   * @return a new order which is pre-configured with MARKET as the order type and BUY as the order side.
+   */
+  public static NewOrder marketBuyForQuotedQuantity(String symbol, String quoteOrderQty) {
+    return new NewOrder(symbol, OrderSide.BUY, OrderType.MARKET, null, null)
+            .quoteOrderQty(quoteOrderQty);
+  }
+
+  /**
+   * Places a MARKET sell order  with specifies the <code>quoteOrderQty</code>> the user wants to receive.
+   *
+   * @return a new order which is pre-configured with MARKET as the order type and SELL as the order side.
+   */
+  public static NewOrder marketSellToReceiveQuantity(String symbol, String quoteOrderQty) {
+    return new NewOrder(symbol, OrderSide.SELL, OrderType.MARKET, null, null)
+            .quoteOrderQty(quoteOrderQty);
+  }
+
+  /**
    * Places a LIMIT buy order for the given <code>quantity</code> and <code>price</code>.
    *
    * @return a new order which is pre-configured with LIMIT as the order type and BUY as the order side.
@@ -247,6 +284,7 @@ public class NewOrder {
         .append("type", type)
         .append("timeInForce", timeInForce)
         .append("quantity", quantity)
+        .append("quoteOrderQty", quoteOrderQty)
         .append("price", price)
         .append("newClientOrderId", newClientOrderId)
         .append("stopPrice", stopPrice)
